@@ -2,37 +2,40 @@
 // https://leetcode.com/problems/find-closest-node-to-given-two-nodes/
 
 class Solution {
-    public void findDis(int[] dis, int[] edges,int start){
-        int distance = 0;
-        int curr = start;
-        Arrays.fill(dis,-1);
-
-        while(curr!=-1 && dis[curr]==-1){
-            dis[curr] = distance;
-            curr = edges[curr];
-            distance++;
-        }
-    }
-    public int closestMeetingNode(int[] edges, int node1, int node2) {
-        int n = edges.length;
-        int[] dis1 = new int[n];
-        int[] dis2 = new int[n];
-
-        findDis(dis1,edges,node1);
-        findDis(dis2,edges,node2);
-        int ind = -1;
-        int max = Integer.MAX_VALUE;
-        for(int i = 0;i<n;i++){
-            if(dis1[i]!=-1 && dis2[i]!=-1){
-                int curr = Math.max(dis1[i],dis2[i]);
-
-                if(curr<max){
-                    max = curr;
-                    ind = i;
-                }
+    public static int[] bfs(int[] edge,int st){
+        Queue<Integer> q = new LinkedList<>();
+        int n = edge.length;
+        int[] a = new int[n];
+        Arrays.fill(a,Integer.MAX_VALUE);
+        a[st] = 0;
+        q.offer(st);
+        while(!q.isEmpty()){
+            int s = q.poll();
+            int next = edge[s];
+            if(next!=-1 && a[next]==Integer.MAX_VALUE){
+                a[next] = a[s]+1;
+                q.offer(next);
             }
         }
+        return a;
 
-        return ind;
+    }
+    public int closestMeetingNode(int[] edges, int node1, int node2) {
+        int[] d1 = bfs(edges,node1);
+        int[] d2 = bfs(edges,node2);
+        int ans = -1;
+        int dis = Integer.MAX_VALUE;
+        for(int i = 0;i<edges.length;i++){
+            if(d1[i] == Integer.MAX_VALUE || d2[i]==Integer.MAX_VALUE){
+                continue;
+            }
+        int sum = Math.max(d1[i], d2[i]);
+
+        if(sum<dis){
+            dis = sum;
+            ans = i;
+        }
+    }
+    return ans;
     }
 }
